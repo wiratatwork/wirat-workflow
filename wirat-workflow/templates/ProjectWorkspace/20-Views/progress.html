@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Progress</title>
-<!-- wf-view-version: 19 -->
+<!-- wf-view-version: 20 -->
 <!-- Created once by the workflow. Never regenerate: update 10-Data/*.json, then run `wf.py bundle`. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -466,10 +466,12 @@ function renderMisc(D) {
   const rows = Object.entries(u).filter(([k,v]) => v && (!pf || k === pf));
   const counts = (D.skill_usage && D.skill_usage.counts) || {};
   const top = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 8), max = top.length ? top[0][1] : 1;
+  const stats = (D.skill_usage && D.skill_usage.skills) || {};
+  const lastUsed = k => stats[k] && stats[k].last_used ? stats[k].last_used : "";   // ISO timestamp from skill-usage.json
   const hd = (icon, t) => `<th class="${TH_STATIC}" title="${t}" aria-label="${t}">${ic(icon)}</th>`;
   $("misc").innerHTML = (rows.length ? `<table class="w-full border-collapse"><thead><tr><th class="${TH_STATIC}">Project</th>${hd("check","Pass")}${hd("x","Fail")}${hd("ban","Blocked")}${hd("minus","Not run")}</tr></thead><tbody>${rows.map(([k,v]) =>
     `<tr><td class="${TD}">${esc(k)}</td><td class="${TD}">${v.Pass}</td><td class="${TD} text-late">${v.Fail}</td><td class="${TD}">${v.Blocked}</td><td class="${TD}">${v["Not Run"]}</td></tr>`).join("")}</tbody></table>` : `<p class="${EMPTY}">ยังไม่มี UAT</p>`) +
-    (top.length ? `<div class="mt-2.5">${top.map(([k,v]) => `<div class="grid grid-cols-[110px_1fr_28px] gap-2 items-center my-1" title="${esc(k)}: ${v}"><span class="truncate">${esc(k)}</span><div class="h-2.5 overflow-hidden rounded-[5px] bg-line"><i class="block h-full bg-accent" style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join("")}</div>` : "");
+    (top.length ? `<div class="mt-2.5">${top.map(([k,v]) => `<div class="grid grid-cols-[110px_1fr_28px_44px] gap-2 items-center my-1" title="${esc(k)}: ${v}"><span class="truncate">${esc(k)}</span><div class="h-2.5 overflow-hidden rounded-[5px] bg-line"><i class="block h-full bg-accent" style="width:${v/max*100}%"></i></div><b>${v}</b><span class="text-xs text-mute" title="last_used: ${esc(lastUsed(k).slice(0, 16).replace("T", " ") || "—")}">${esc(fmtShort(lastUsed(k).slice(0, 10)))}</span></div>`).join("")}</div>` : "");
 }
 
 async function tryFetch() {

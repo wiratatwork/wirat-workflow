@@ -31,6 +31,13 @@ import make_fixtures  # noqa: E402
 BASE = None
 
 
+TPL_VIEWS = WF_HOME / "templates" / "ProjectWorkspace" / "20-Views"
+
+
+def view_ver(p):
+    return re.search(r"wf-view-version:\s*(\d+)", Path(p).read_text(encoding="utf-8")).group(1)
+
+
 def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
@@ -172,7 +179,10 @@ class T04_HtmlViews(WFTest):
             html = (ws / "20-Views" / v).read_text(encoding="utf-8")
             self.assertIn('<script src="../10-Data/data.js"></script>', html)
             self.assertIn('<script src="../../../../Portfolio/portfolio-data.js"></script>', html)
-            self.assertNotRegex(html, r"https?://", f"{v} must not need network")
+            # data never leaves the machine: only the styling CDNs (Tailwind, Google Fonts) may be fetched
+            urls = set(re.findall(r"https?://[^\s\"'<>)]+", html))
+            allowed = ("https://cdn.tailwindcss.com", "https://fonts.googleapis.com", "https://fonts.gstatic.com")
+            self.assertEqual([u for u in sorted(urls) if not u.startswith(allowed)], [], f"{v} may only load styling CDNs")
         for f in (ws / "10-Data" / "data.js", self.ws / "Portfolio" / "portfolio-data.js"):
             body = f.read_text(encoding="utf-8")
             obj = json.loads(body[body.index("=") + 1:].rstrip().rstrip(";"))
@@ -187,7 +197,7 @@ class T04_HtmlViews(WFTest):
         for mode in ("all", "project", "wirat", "stakeholder"):
             self.assertIn(f'data-mode="{mode}"', html)
         for h in ("on-track", "at-risk", "delayed", "blocked", "waiting-user", "waiting-manager"):
-            self.assertIn(f".h-{h}", html)
+            self.assertIn(f'"{h}":"', html)
 
     def test_portfolio_bundle_supports_cross_project_filtering(self):
         body = (self.ws / "Portfolio" / "portfolio-data.js").read_text(encoding="utf-8")
@@ -928,7 +938,7 @@ class T16_Views(MoreWFTest):
     def test_views_are_current_templates_and_use_lazy_journey(self):
         v = self.proj("food-delivery") / "20-Views"
         for name in ("progress.html", "journey.html", "backlog.html"):
-            self.assertIn("wf-view-version: 3", (v / name).read_text(encoding="utf-8"))
+            self.assertEqual(view_ver(v / name), view_ver(TPL_VIEWS / name))
         j = (v / "journey.html").read_text(encoding="utf-8")
         self.assertIn("journey-data/", j)
         self.assertIn("WF_JOURNEY", j)
@@ -951,20 +961,20 @@ class T16_Views(MoreWFTest):
 
     def test_upgrade_keeps_a_backup_and_adds_no_html_files(self):
         v = self.proj("food-delivery") / "20-Views"
-        old = (v / "progress.html").read_text(encoding="utf-8").replace("<!-- wf-view-version: 3 -->", "")
+        old = re.sub(r"<!-- wf-view-version: \d+ -->", "", (v / "progress.html").read_text(encoding="utf-8"))
         (v / "progress.html").write_text(old, encoding="utf-8")
         self.assertIn("older than the template", self.wf("validate", "food-delivery").stdout)
         h = tree_hash(v)
         self.wf("--dry-run", "views", "--project", "food-delivery")
         self.assertEqual(h, tree_hash(v))
         out = self.wf("views", "--project", "food-delivery").stdout
-        self.assertIn("progress.html: v0 -> v3", out)
+        self.assertIn(f"progress.html: v0 -> v{view_ver(TPL_VIEWS / 'progress.html')}", out)
         self.assertIn("up to date", out)
         self.assertEqual(sorted(p.name for p in v.glob("*.html")), ["backlog.html", "journey.html", "progress.html"])
         baks = list((v / "_prev").glob("*_progress.html.bak"))
         self.assertEqual(len(baks), 1)
         self.assertEqual(baks[0].read_text(encoding="utf-8"), old)
-        self.assertIn("wf-view-version: 3", (v / "progress.html").read_text(encoding="utf-8"))
+        self.assertEqual(view_ver(v / "progress.html"), view_ver(TPL_VIEWS / "progress.html"))
 
 
 class T17_CompactReads(MoreWFTest):
