@@ -1,0 +1,6 @@
+# per-computer paths and caches never go in the repo
+wirat-workflow/local.json
+__pycache__/
+*.pyc
+backups/
+*.zip

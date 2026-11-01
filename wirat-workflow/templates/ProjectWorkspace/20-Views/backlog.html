@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backlog</title>
+<!-- wf-view-version: 9 -->
+<!-- Created once by the workflow. Never regenerate: update 10-Data/backlog.json, then run `wf.py bundle`. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {darkMode: "media", theme: {extend: {
+    fontFamily: {sans: ['"Noto Sans Thai"', '"Noto Sans"', 'system-ui', 'sans-serif']},
+    colors: {
+      bg:"var(--bg)", card:"var(--card)", ink:"var(--ink)", mute:"var(--mute)", line:"var(--line)", accent:"var(--accent)",
+      ok:"var(--ok)", "ok-bg":"var(--ok-bg)", risk:"var(--risk)", "risk-bg":"var(--risk-bg)", late:"var(--late)", "late-bg":"var(--late-bg)",
+      blk:"var(--blk)", "blk-bg":"var(--blk-bg)", wu:"var(--wu)", "wu-bg":"var(--wu-bg)", wm:"var(--wm)", "wm-bg":"var(--wm-bg)",
+      unk:"var(--unk)", "unk-bg":"var(--unk-bg)", done:"var(--done)", "done-bg":"var(--done-bg)"
+    }}}};
+</script>
+<style type="text/tailwindcss">
+:root{--bg:#f4f4f5;--card:#fff;--ink:#1a1a1a;--mute:#5f6368;--line:#e2e2e5;--accent:#eb0a1e;
+--ok:#12805c;--ok-bg:#e6f6ef;--risk:#b54708;--risk-bg:#fef4e6;--late:#9f0712;--late-bg:#fde8ea;
+--blk:#6b2fbf;--blk-bg:#f3ecfd;--wu:#1f62c7;--wu-bg:#e8f0fd;--wm:#0e7c86;--wm-bg:#e3f5f6;--unk:#555e6e;--unk-bg:#eef0f3;--done:#4b5563;--done-bg:#eceff3}
+@media (prefers-color-scheme:dark){:root{--bg:#0f0f10;--card:#1a1b1e;--ink:#f2f2f3;--mute:#a1a1aa;--line:#2e2f33;--accent:#ff4d5e;
+--ok:#4fd1a1;--ok-bg:#12352a;--risk:#f5b452;--risk-bg:#3a2a12;--late:#ff7a8f;--late-bg:#3d1820;--blk:#c4a2ff;--blk-bg:#2c2040;
+--wu:#86b4ff;--wu-bg:#172a48;--wm:#5fd3dc;--wm-bg:#11343a;--unk:#b3bac6;--unk-bg:#272d38;--done:#a5adbb;--done-bg:#252a33}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+<script src="../10-Data/data.js"></script>
+<script src="../../../../Portfolio/portfolio-data.js"></script>
+<script>if (!window.WF_PORTFOLIO_DATA) document.write('<script src="../10-Data/portfolio-data.js"><\/script>');</script><!-- copy used only when this workspace is mapped outside <workspace>/Projects -->
+</head>
+<body class="bg-bg text-ink text-sm leading-normal font-sans">
+<header class="p-4 bg-[#1a1a1a] dark:bg-black text-white border-b-[3px] border-accent">
+  <div class="flex flex-wrap items-baseline gap-3"><h1 id="title" class="text-xl font-bold">Backlog</h1><span id="meta" class="text-xs text-zinc-300"></span></div>
+  <div id="filters" class="flex flex-wrap items-end gap-2 mt-2.5">
+    <label class="flex flex-col text-[11px] text-zinc-300">Project<select id="f-project" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Owner<select id="f-owner" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Health<select id="f-health" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Due<select id="f-due" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"><option value="">ทั้งหมด</option><option value="overdue">เลย</option><option value="7">7 วัน</option><option value="14">14 วัน</option><option value="30">30 วัน</option></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Search<input id="f-q" placeholder="ID / ชื่อ" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0 placeholder:text-zinc-400"></label>
+    <details class="w-full">
+      <summary class="cursor-pointer py-1 text-xs text-zinc-300">เพิ่มเติม</summary>
+      <div class="flex flex-wrap items-end gap-2 mt-2.5">
+        <label class="flex flex-col text-[11px] text-zinc-300">Module<select id="f-module" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+        <label class="flex flex-col text-[11px] text-zinc-300">Stakeholder<select id="f-stake" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+        <label class="flex flex-col text-[11px] text-zinc-300">Status<select id="f-status" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+        <label class="flex flex-col text-[11px] text-zinc-300">Due ก่อน<input type="date" id="f-due-before" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></label>
+      </div>
+    </details>
+  </div>
+</header>
+<main class="grid gap-4 p-4 max-w-[1400px] mx-auto">
+  <div id="loader" hidden class="border-2 border-dashed border-line rounded-[10px] p-4 text-center"><p>ไม่พบข้อมูล</p><input type="file" id="files" accept=".json"></div>
+  <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><h2 id="count" class="text-[15px] font-semibold mb-2.5">Tasks</h2><div class="overflow-x-auto"><table id="tbl" class="w-full border-collapse"></table></div></section>
+  <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0">
+    <h2 class="text-[15px] font-semibold mb-2.5" title="Wave 1 = ไม่มี dependency ค้าง · wave ถัดไปเริ่มเมื่อ wave ก่อนหน้าเสร็จ">Waves</h2>
+    <div id="waves" class="flex gap-2.5 overflow-x-auto pb-1.5"></div>
+    <details class="mt-2.5"><summary class="cursor-pointer text-accent">Dependency chains</summary><div id="chains" class="mt-1"></div></details>
+  </section>
+  <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><h2 class="text-[15px] font-semibold mb-2.5">Open questions</h2><div id="oqs" class="overflow-x-auto"></div></section>
+</main>
+<dialog id="t-modal" class="w-[min(560px,92vw)] p-0 rounded-xl border border-line bg-card text-ink backdrop:bg-black/50"><div id="t-modal-body"></div></dialog>
+<script>
+"use strict";
+const HEALTH = {"on-track":"On track","at-risk":"At risk","delayed":"Delayed","blocked":"Blocked","waiting-user":"Waiting on user",
+  "waiting-manager":"Waiting on manager","unknown":"Unknown","proposed":"Proposed","done":"Done"};
+const SHORT = {"on-track":"On track","at-risk":"At risk","delayed":"Delayed","blocked":"Blocked","waiting-user":"Wait user",
+  "waiting-manager":"Wait mgr","unknown":"Unknown","proposed":"Proposed","done":"Done"};
+// Tailwind class sets (full strings so the CDN can see them)
+const TXT = {"on-track":"text-ok bg-ok-bg","at-risk":"text-risk bg-risk-bg","delayed":"text-late bg-late-bg","blocked":"text-blk bg-blk-bg",
+  "waiting-user":"text-wu bg-wu-bg","waiting-manager":"text-wm bg-wm-bg","unknown":"text-unk bg-unk-bg","proposed":"text-unk bg-unk-bg","done":"text-done bg-done-bg"};
+const BG = {"on-track":"bg-ok","at-risk":"bg-risk","delayed":"bg-late","blocked":"bg-blk","waiting-user":"bg-wu","waiting-manager":"bg-wm",
+  "unknown":"bg-unk","proposed":"bg-unk","done":"bg-done"};
+const BTN = "px-2.5 py-1 min-h-[44px] md:min-h-0 rounded-full border border-line bg-bg text-ink cursor-pointer";
+const TH = "px-2 py-1.5 text-left align-top text-xs font-semibold text-mute whitespace-nowrap cursor-pointer border-b border-line";
+const TH_STATIC = "px-2 py-1.5 text-left align-top text-xs font-semibold text-mute whitespace-nowrap border-b border-line";
+const TD = "px-2 py-1.5 text-left align-top border-b border-line";
+const MUTE = "text-xs text-mute", EMPTY = "text-mute italic", UL = "list-disc pl-[18px] m-0";
+const P = {
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  ban: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>'
+};
+const ic = (n, c = "w-3.5 h-3.5") => `<svg class="${c} inline-block align-[-2px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+let PROJ = window.WF_PROJECT_DATA || null, PORT = window.WF_PORTFOLIO_DATA || null;
+const st = {sort:"priority", dir:1};
+const REQ = ["owner","priority","due","estimate_days","definition_of_done"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const badge = h => `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${TXT[h] || TXT.unknown}" title="${esc(HEALTH[h]||h)}">${esc(SHORT[h]||h)}</span>`;
+const dot = h => `<span class="inline-block w-2 h-2 rounded-full align-middle ${BG[h] || BG.unknown}" title="${esc(HEALTH[h] || h || "unknown")}"></span>`;
+const fmtShort = s => s ? s.slice(5).split("-").reverse().join("/") : "—";
+function D() {
+  if (PORT) return PORT;
+  const b = (PROJ && PROJ.backlog) || {}, pr = (PROJ && PROJ.progress) || {};
+  const hp = Object.fromEntries((pr.tasks||[]).map(t => [t.id, t.health]));
+  return {projects:[{slug:b.project,name:b.project_name}], tasks:(b.tasks||[]).map(t => ({project:b.project, ...t, health: hp[t.id] || "unknown"})),
+    stakeholders: pr.stakeholders || [], open_questions: (b.open_questions||[]).map(q => ({project:b.project, ...q})), as_of: pr.as_of};
+}
+const ref = () => new Date((D().as_of || new Date().toISOString().slice(0,10)) + "T00:00:00");
+const days = s => s ? Math.round((new Date(s+"T00:00:00") - ref())/864e5) : null;
+function init() {
+  if (!PROJ && !PORT) return fallback();
+  const d = D(), cur = (PROJ && PROJ.project) || "";
+  $("title").textContent = "Backlog — " + ((d.projects.find(p => p.slug === cur)||{}).name || cur || "Portfolio");
+  $("meta").textContent = `ณ ${d.as_of||"?"}`;
+  $("meta").title = PORT ? "แสดงได้ทุกโปรเจกต์" : "เฉพาะโปรเจกต์นี้";
+  const u = a => [...new Set(a.filter(Boolean))].sort(), fill = (id, v, l) => $(id).innerHTML = `<option value="">${l}</option>` + v.map(x => `<option>${esc(x)}</option>`).join("");
+  fill("f-project", d.projects.map(p => p.slug), "ทั้งหมด"); fill("f-module", u(d.tasks.map(t => t.module)), "ทั้งหมด");
+  fill("f-owner", u(d.tasks.map(t => t.owner)), "ทุกคน"); fill("f-stake", u(d.tasks.flatMap(t => [...(t.stakeholders||[]), ...(t.blocked_by||[])])), "ทุกคน");
+  fill("f-status", u(d.tasks.map(t => t.status)), "ทั้งหมด");
+  $("f-health").innerHTML = `<option value="">ทั้งหมด</option>` + Object.keys(HEALTH).map(k => `<option value="${k}">${SHORT[k]}</option>`).join("");
+  $("f-project").value = cur;
+  document.querySelectorAll("#filters select, #filters input").forEach(e => e.oninput = render);
+  $("tbl").onclick = e => { const tr = e.target.closest("tr[data-id]"); if (tr) openTask(tr.dataset.id); };
+  $("tbl").onkeydown = e => { if (e.target.matches && e.target.matches("tr[data-id]") && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openTask(e.target.dataset.id); } };
+  $("waves").onclick = e => { const c = e.target.closest("[data-id]"); if (c) openTask(c.dataset.id); };
+  $("waves").onkeydown = e => { if (e.target.matches && e.target.matches("[data-id]") && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openTask(e.target.dataset.id); } };
+  $("t-modal").onclick = e => { if (e.target === $("t-modal") || e.target.closest("#t-close")) $("t-modal").close(); };
+  render();
+}
+function rows() {
+  const f = id => $(id).value;
+  return D().tasks.filter(t => (!f("f-project") || t.project === f("f-project")) && (!f("f-module") || t.module === f("f-module"))
+    && (!f("f-owner") || t.owner === f("f-owner")) && (!f("f-stake") || (t.stakeholders||[]).includes(f("f-stake")) || (t.blocked_by||[]).includes(f("f-stake")) || t.owner === f("f-stake"))
+    && (!f("f-status") || t.status === f("f-status")) && (!f("f-health") || t.health === f("f-health"))
+    && (f("f-due") !== "overdue" || (days(t.due) < 0 && t.health !== "done")) && (!f("f-due") || f("f-due") === "overdue" || (days(t.due) >= 0 && days(t.due) <= +f("f-due")))
+    && (!f("f-due-before") || (t.due && t.due <= f("f-due-before"))) && (!f("f-q") || (t.id + " " + t.title).toLowerCase().includes(f("f-q").toLowerCase())));
+}
+function openTask(id) {
+  const t = D().tasks.find(x => x.id === id);
+  if (!t) return;
+  const row = (k, v) => `<tr><th class="${TH_STATIC} w-36 whitespace-normal">${k}</th><td class="${TD}">${v}</td></tr>`, list = a => a && a.length ? esc(a.join(", ")) : "—";
+  $("t-modal-body").innerHTML = `<div class="p-4"><div class="flex flex-wrap items-center gap-2 mb-2"><b>${esc(t.id)}</b> ${esc(t.title)} ${badge(t.health)}<button type="button" id="t-close" class="${BTN} ml-auto">ปิด</button></div>
+    <table class="w-full border-collapse">${row("Project", esc(t.project))}${row("Module", esc(t.module))}${row("Owner", esc(t.owner))}${row("Stakeholders", list(t.stakeholders))}
+    ${row("Priority / Status", `${esc(t.priority ?? "—")} / ${esc(t.status ?? "—")}`)}${row("Due / Estimate", `${esc(t.due || "—")} / ${esc(t.estimate_days ?? "?")} วัน`)}
+    ${row("Depends on", list(t.dependencies))}${row("Blockers", list([...(t.blocked_by||[]), t.waiting_on ? "waiting: " + t.waiting_on : ""].filter(Boolean)))}
+    ${row("Definition of Done", esc(t.definition_of_done ?? "—"))}</table></div>`;
+  $("t-modal").showModal();
+}
+function render() {
+  const r = rows();
+  const cols = [["id","ID"],["title","Task"],["owner","Owner"],["due","Due"],["health","Health"],["blocked_by","Blockers"]];
+  const s = [...r].sort((a,b) => String(a[st.sort] ?? "~").localeCompare(String(b[st.sort] ?? "~"), undefined, {numeric:true}) * st.dir);
+  $("count").textContent = `Tasks (${r.length})`;
+  $("tbl").innerHTML = `<thead><tr>${cols.map(([k,l]) => `<th data-k="${k}" tabindex="0" class="${TH}" aria-sort="${st.sort===k?(st.dir>0?"ascending":"descending"):"none"}">${l}${st.sort===k?(st.dir>0?" ▲":" ▼"):""}</th>`).join("")}</tr></thead><tbody>${s.map(t => {
+    const miss = REQ.filter(k => t[k] === undefined || t[k] === null || t[k] === "");
+    return `<tr data-id="${esc(t.id)}" tabindex="0" class="cursor-pointer hover:bg-bg"><td class="${TD}">${esc(t.id)}</td><td class="${TD}">${esc(t.title)}${miss.length ? ` <span class="text-late" title="ขาด: ${esc(miss.join(", "))}">${ic("alert")}</span>` : ""}</td>
+    <td class="${TD}">${esc(t.owner)}</td><td class="${TD}">${esc(fmtShort(t.due))}</td><td class="${TD}">${badge(t.health)}</td><td class="${TD}">${(t.blocked_by||[]).length || ""}</td></tr>`; }).join("") || `<tr><td colspan="${cols.length}" class="${TD} ${EMPTY}">ไม่มีงาน</td></tr>`}</tbody>`;
+  document.querySelectorAll("#tbl th").forEach(th => th.onclick = th.onkeydown = e => { if (e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return; e.preventDefault(); st.dir = st.sort === th.dataset.k ? -st.dir : 1; st.sort = th.dataset.k; render(); });
+  waves(r); oqs(r);
+}
+function waves(r) {
+  const all = Object.fromEntries(D().tasks.map(t => [t.id, t])), open = r.filter(t => t.health !== "done" && t.status !== "cancelled");
+  const level = {};
+  const lv = (id, seen = new Set()) => { if (level[id] !== undefined) return level[id]; if (seen.has(id)) return 99; seen.add(id);
+    const deps = (all[id] && all[id].dependencies || []).filter(x => all[x] && all[x].health !== "done");
+    return level[id] = deps.length ? 1 + Math.max(...deps.map(x => lv(x, seen))) : 1; };
+  open.forEach(t => lv(t.id));
+  const groups = {}; open.forEach(t => (groups[level[t.id]] = groups[level[t.id]] || []).push(t));
+  $("waves").innerHTML = Object.keys(groups).sort((a,b) => a-b).map(k => `<div class="min-w-[220px] flex-1 border border-line rounded-lg p-2 bg-bg"><b>Wave ${k}</b> <span class="${MUTE}">${groups[k].length}</span>${groups[k].map(t =>
+    `<div tabindex="0" data-id="${esc(t.id)}" title="${esc(t.title)} · ${esc(t.project)} · ${esc(t.owner)} · ${esc(t.due||"—")}" class="my-1.5 px-2 py-1.5 min-h-[44px] md:min-h-0 text-[13px] bg-card border border-line rounded-md cursor-pointer"><b>${esc(t.id)}</b> ${dot(t.health)}<div class="${MUTE}">${esc(t.title)}</div></div>`).join("")}</div>`).join("") || `<p class="${EMPTY}">ไม่มีงานค้าง</p>`;
+  const chain = id => { const deps = (all[id] && all[id].dependencies || []).filter(x => all[x]); if (!deps.length) return [id];
+    return deps.map(chain).sort((a,b) => b.length - a.length)[0].concat(id); };
+  const chains = open.map(t => chain(t.id)).filter(c => c.length > 1).sort((a,b) => b.length - a.length)
+    .filter((c, i, arr) => !arr.slice(0, i).some(o => o.join(">").includes(c.join(">")))).slice(0, 10);
+  $("chains").innerHTML = chains.length ? `<ul class="${UL}">${chains.map(c => `<li class="my-1">${c.map(id => `${esc(id)} ${dot(all[id].health)}`).join(" → ")}</li>`).join("")}</ul>` : `<p class="${EMPTY}">ไม่มี chain</p>`;
+}
+function oqs(r) {
+  const ids = new Set(r.map(t => t.id)), pf = $("f-project").value;
+  const qs = (D().open_questions||[]).filter(q => (!pf || q.project === pf) && ((q.linked_tasks||[]).some(x => ids.has(x)) || !(q.linked_tasks||[]).length));
+  $("oqs").innerHTML = qs.length ? `<table class="w-full border-collapse"><thead><tr><th class="${TH_STATIC}">ID</th><th class="${TH_STATIC}">Question</th><th class="${TH_STATIC}">Owner</th><th class="${TH_STATIC}">Meeting</th></tr></thead><tbody>${qs.map(q =>
+    `<tr><td class="${TD}">${esc(q.id)}</td><td class="${TD}">${esc(q.question)}</td><td class="${TD}">${esc(q.owner)}</td><td class="${TD}">${esc(q.target_meeting)}</td></tr>`).join("")}</tbody></table>` : `<p class="${EMPTY}">ไม่มี</p>`;
+}
+async function fallback() {
+  try { const b = await fetch("../10-Data/backlog.json").then(r => { if (!r.ok) throw 0; return r.json(); }); PROJ = {project:b.project, backlog:b}; init(); }
+  catch (e) { $("loader").hidden = false; $("files").onchange = async ev => { const b = JSON.parse(await ev.target.files[0].text()); $("loader").hidden = true; PROJ = {project:b.project, backlog:b}; init(); }; }
+}
+init();
+</script>
+</body>
+</html>

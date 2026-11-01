@@ -1,0 +1,10 @@
+{
+  "id": "OQ-000",
+  "question": "One focused question",
+  "owner": "stakeholder-id who must answer (required)",
+  "target_meeting": "MTG-### or 'YYYY-MM-DD <meeting name>' (required)",
+  "status": "open",
+  "linked_tasks": [],
+  "raised_in": "MTG-### or clarify",
+  "options_presented": ["Option 1 (recommended)", "Option 2"]
+}

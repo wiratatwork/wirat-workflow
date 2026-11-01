@@ -1,0 +1,11 @@
+{
+  "note": "Why this revision exists",
+  "add": [
+    {"module": "approval", "scenario": "Approver approves a request", "preconditions": "Request REQ-1 pending",
+     "steps": ["Login as approver", "Open REQ-1", "Click Approve"], "expected": "Status = Approved, requester notified",
+     "tester": "somchai", "tasks": ["TASK-001"], "stakeholders": ["somchai"], "test_data": "UAT env, user approver01"}
+  ],
+  "update": [
+    {"uat_id": "UAT-001", "actual": "As expected", "status": "Pass", "remarks": ""}
+  ]
+}

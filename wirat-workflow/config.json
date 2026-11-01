@@ -1,0 +1,13 @@
+{
+  "owner": "wirat",
+  "owner_display_name": "Wirat",
+  "workspace": "~/Obsidian/Wirat-Workspace",
+  "language": "th",
+  "timestamp_format": "%Y%m%d-%H%M%S",
+  "min_history_for_estimate": 3,
+  "skill_usage_logging": "auto",
+  "done_statuses": ["accepted", "done", "cancelled"],
+  "task_statuses": ["proposed", "todo", "in-progress", "in-review", "uat", "accepted", "done", "blocked", "cancelled"],
+  "plan_fields": ["title", "module", "owner", "priority", "due", "start", "uat_date", "estimate_days", "dependencies", "stakeholders", "definition_of_done", "task_type", "complexity"],
+  "required_task_fields": ["id", "title", "project", "module", "owner", "priority", "due", "estimate_days", "dependencies", "definition_of_done"]
+}

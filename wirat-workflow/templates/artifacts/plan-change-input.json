@@ -1,0 +1,19 @@
+{
+  "title": "Move TASK-018 to next week",
+  "reason": "Why the plan must change (evidence: meeting / blocker / estimate)",
+  "requested_by": "wirat",
+  "changes": [
+    {"op": "set", "task": "TASK-018", "field": "due", "to": "2026-11-13"},
+    {"op": "add_task", "project": "<slug>", "task": {"title": "...", "module": "...", "owner": "wirat", "priority": "P2",
+      "due": "YYYY-MM-DD", "estimate_days": 1, "dependencies": [], "stakeholders": [], "definition_of_done": "feature",
+      "task_type": "backend-feature", "complexity": "low"}},
+    {"op": "cancel", "task": "TASK-0XX"}
+  ],
+  "alternatives": [
+    {"title": "Most recommended", "description": "", "benefits": "", "drawbacks": "", "timeline_impact": "",
+     "capacity_impact": "", "stakeholder_impact": "", "other_projects_impact": "", "risk": ""},
+    {"title": "Second", "description": "", "benefits": "", "drawbacks": "", "timeline_impact": "",
+     "capacity_impact": "", "stakeholder_impact": "", "other_projects_impact": "", "risk": ""}
+  ],
+  "impacts": {"timeline": "", "capacity": "", "stakeholders": "", "other_projects": ""}
+}

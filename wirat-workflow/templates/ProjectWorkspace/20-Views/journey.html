@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Journey</title>
+<!-- wf-view-version: 9 -->
+<!-- Created once by the workflow. Never regenerate: update the data with wf.py, then it runs `bundle`.
+     Journey data is loaded in pieces: 10-Data/data.js carries only a digest; each month is a script in 10-Data/journey-data/. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {darkMode: "media", theme: {extend: {
+    fontFamily: {sans: ['"Noto Sans Thai"', '"Noto Sans"', 'system-ui', 'sans-serif']},
+    colors: {
+      bg:"var(--bg)", card:"var(--card)", ink:"var(--ink)", mute:"var(--mute)", line:"var(--line)", accent:"var(--accent)",
+      ok:"var(--ok)", "ok-bg":"var(--ok-bg)", risk:"var(--risk)", "risk-bg":"var(--risk-bg)", late:"var(--late)", "late-bg":"var(--late-bg)",
+      blk:"var(--blk)", "blk-bg":"var(--blk-bg)", wu:"var(--wu)", "wu-bg":"var(--wu-bg)", wm:"var(--wm)", "wm-bg":"var(--wm-bg)",
+      unk:"var(--unk)", "unk-bg":"var(--unk-bg)", done:"var(--done)", "done-bg":"var(--done-bg)"
+    }}}};
+</script>
+<style type="text/tailwindcss">
+:root{--bg:#f4f4f5;--card:#fff;--ink:#1a1a1a;--mute:#5f6368;--line:#e2e2e5;--accent:#eb0a1e;
+--milestone:#12805c;--decision:#1a1a1a;--release:#6b2fbf;--meeting:#0e7c86;--plan-change:#b54708;--acceptance:#1f8f3a;--change:#555e6e;--module-evolution:#555e6e;--risk:#c01f3b}
+@media (prefers-color-scheme:dark){:root{--bg:#0f0f10;--card:#1a1b1e;--ink:#f2f2f3;--mute:#a1a1aa;--line:#2e2f33;--accent:#ff4d5e;
+--milestone:#4fd1a1;--decision:#f2f2f3;--release:#c4a2ff;--meeting:#5fd3dc;--plan-change:#f5b452;--acceptance:#6ee08a;--change:#b3bac6;--module-evolution:#b3bac6;--risk:#ff7a8f}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+<script src="../10-Data/data.js"></script>
+<script src="../../../../Portfolio/portfolio-data.js"></script>
+<script>if (!window.WF_PORTFOLIO_DATA) document.write('<script src="../10-Data/portfolio-data.js"><\/script>');</script><!-- copy used only when this workspace is mapped outside <workspace>/Projects -->
+</head>
+<body class="bg-bg text-ink text-sm leading-normal font-sans">
+<header class="p-4 bg-[#1a1a1a] dark:bg-black text-white border-b-[3px] border-accent">
+  <div class="flex flex-wrap items-baseline gap-3"><h1 id="title" class="text-xl font-bold">Project Journey</h1><span id="meta" class="text-xs text-zinc-300"></span></div>
+  <div id="vtabs" class="flex flex-wrap gap-1.5 mt-2.5">
+    <button data-v="timeline" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-accent text-white dark:text-zinc-950 border-accent">Timeline</button>
+    <button data-v="modules" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">Modules</button>
+  </div>
+  <div id="filters" class="flex flex-wrap items-end gap-2 mt-2.5">
+    <label class="flex flex-col text-[11px] text-zinc-300">Project<select id="f-project" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Type<select id="f-type" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Stakeholder<select id="f-stake" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Search<input id="f-q" placeholder="ค้นหา" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0 placeholder:text-zinc-400"></label>
+    <details class="w-full">
+      <summary class="cursor-pointer py-1 text-xs text-zinc-300">เพิ่มเติม</summary>
+      <div class="flex flex-wrap items-end gap-2 mt-2.5">
+        <label class="flex flex-col text-[11px] text-zinc-300">Module<select id="f-module" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+        <label class="flex flex-col text-[11px] text-zinc-300">จาก<input type="date" id="f-from" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></label>
+        <label class="flex flex-col text-[11px] text-zinc-300">ถึง<input type="date" id="f-to" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></label>
+      </div>
+    </details>
+  </div>
+</header>
+<main class="grid gap-4 p-4 max-w-[1300px] mx-auto">
+  <div id="loader" hidden class="border-2 border-dashed border-line rounded-[10px] p-4 text-center"><p>ไม่พบข้อมูล</p><input type="file" id="files" accept=".json"></div>
+  <section id="history" hidden class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"></section>
+  <section id="v-timeline" class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><div id="note" class="text-xs text-mute"></div><div id="timeline" class="relative ml-2.5 pl-[22px] border-l-2 border-line"></div></section>
+  <section id="v-modules" hidden class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><div id="modules" class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(min(260px,100%),1fr))]"></div></section>
+</main>
+<script>
+"use strict";
+const MUTE = "text-xs text-mute", EMPTY = "text-mute italic";
+const TAB = "px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer";
+const TAB_ON = "bg-accent text-white dark:text-zinc-950 border-accent", TAB_OFF = "bg-bg text-ink border-line";
+const BTN = "px-2.5 py-1 min-h-[44px] md:min-h-0 rounded-full border border-line bg-bg text-ink cursor-pointer";
+const TAG = "inline-flex items-center gap-1 mr-1 mb-1 px-1.5 text-[11px] bg-bg border border-line rounded";
+// Lucide-style inline icons (no emoji)
+const P = {
+  box: '<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+  task: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  decision: '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+  user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  meeting: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
+  file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  change: '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>'
+};
+const ic = (n, c = "w-3 h-3") => `<svg class="${c} inline-block align-[-2px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+const tag = (icon, text, title) => `<span class="${TAG}"${title ? ` title="${esc(title)}"` : ""}>${ic(icon)}${esc(text)}</span>`;
+
+let PROJ = window.WF_PROJECT_DATA || null, PORT = window.WF_PORTFOLIO_DATA || null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const SEG = () => (window.WF_JOURNEY = window.WF_JOURNEY || {});
+const loaded = new Set(), loading = {};
+const isV2 = j => j && j.version === 2;
+
+function digests() {
+  const out = {};
+  if (PORT && PORT.journeys) Object.assign(out, PORT.journeys);
+  if (PROJ && PROJ.journey) out[PROJ.project] = PROJ.journey;
+  return out;
+}
+const cur = () => (PROJ && PROJ.project) || Object.keys(digests())[0];
+
+function loadPeriod(period) {                       // one <script> per month, works from file://
+  if (loaded.has(period) || SEG()[period]) { loaded.add(period); return Promise.resolve(); }
+  if (loading[period]) return loading[period];
+  return loading[period] = new Promise(res => {
+    const s = document.createElement("script");
+    s.src = `../10-Data/journey-data/${period}.js`;
+    s.onload = () => { loaded.add(period); res(); };
+    s.onerror = () => { loaded.add(period); res(); };
+    document.head.appendChild(s);
+  });
+}
+
+function periodsOf(project) { const d = digests()[project]; return isV2(d) ? d.periods.map(p => p.period).sort() : []; }
+
+function allLoaded() {                              // events of the current project that are in memory
+  const out = [];
+  [...loaded].sort().forEach(p => (SEG()[p] || []).forEach(e => out.push(e)));
+  return out;
+}
+
+async function init() {
+  if (!PROJ && !PORT) return fallback();
+  const D = digests(), c = cur();
+  $("title").textContent = "Journey — " + c;
+  const projects = Object.keys(D);
+  $("f-project").innerHTML = `<option value="">ทั้งหมด</option>` + projects.map(x => `<option>${esc(x)}</option>`).join("");
+  $("f-project").value = c;
+  document.querySelectorAll("#vtabs button").forEach(b => b.onclick = () => { document.querySelectorAll("#vtabs button").forEach(x => x.className = `${TAB} ${x === b ? TAB_ON : TAB_OFF}`);
+    $("v-timeline").hidden = b.dataset.v !== "timeline"; $("v-modules").hidden = b.dataset.v !== "modules"; });
+  document.querySelectorAll("#filters select, #filters input").forEach(e => e.oninput = render);
+  const ps = periodsOf(c);
+  await Promise.all(ps.slice(-2).map(loadPeriod));   // the 2 newest months only
+  fillFilters(); render();
+}
+
+function fillFilters() {
+  const D = digests(), evs = allLoaded();
+  const u = a => [...new Set(a.filter(Boolean))].sort(), fill = (id, v, l) => { const x = $(id).value; $(id).innerHTML = `<option value="">${l}</option>` + v.map(y => `<option>${esc(y)}</option>`).join(""); $(id).value = x; };
+  const digestEvs = Object.values(D).flatMap(d => (d.recent || d.timeline || []));
+  fill("f-module", u(evs.flatMap(e => e.modules || []).concat(Object.values(D).flatMap(d => (d.modules || []).map(m => m.module || "")))), "ทั้งหมด");
+  fill("f-type", u(evs.map(e => e.type).concat(digestEvs.map(e => e.type))), "ทั้งหมด");
+  fill("f-stake", u(evs.flatMap(e => e.stakeholders || []).concat(digestEvs.flatMap(e => e.stakeholders || []))), "ทุกคน");
+}
+
+function render() {
+  const D = digests(), c = cur(), g = id => $(id).value, sel = g("f-project");
+  const d = D[c] || {}, v2 = isV2(d), total = v2 ? d.total_events : (d.timeline || []).length;
+  const ps = periodsOf(c), notLoaded = ps.filter(p => !loaded.has(p));
+  $("meta").textContent = `${total} เหตุการณ์`;
+  $("meta").title = `โหลดแล้ว ${loaded.size}/${ps.length} เดือน · digest ${v2 ? "v2" : "รูปแบบเก่า (รัน wf.py journey-compact)"}`;
+  $("history").hidden = !notLoaded.length;
+  $("history").innerHTML = notLoaded.length
+    ? `<div class="flex flex-wrap items-center justify-between gap-2"><span class="${MUTE}">ยังไม่โหลด ${notLoaded.length} เดือนเก่า</span><span class="flex gap-1.5"><button id="more" type="button" class="${BTN}">+ เดือนก่อนหน้า</button><button id="all" type="button" class="${BTN}">ทั้งหมด</button></span></div>` : "";
+  if ($("more")) { $("more").onclick = async () => { await loadPeriod(notLoaded[notLoaded.length-1]); fillFilters(); render(); };
+    $("all").onclick = async () => { await Promise.all(notLoaded.map(loadPeriod)); fillFilters(); render(); }; }
+  const inRange = dd => (!g("f-from") || dd >= g("f-from")) && (!g("f-to") || dd <= g("f-to"));
+  const q = g("f-q").toLowerCase();
+  const match = e => (!g("f-module") || (e.modules||[]).includes(g("f-module"))) && (!g("f-type") || e.type === g("f-type"))
+    && (!g("f-stake") || (e.stakeholders||[]).includes(g("f-stake"))) && inRange(e.date||"")
+    && (!q || ((e.title||"") + " " + (e.summary||"")).toLowerCase().includes(q));
+  let evs, note = "";
+  if (sel && sel !== c) {                                   // another project: its digest only
+    const dd = D[sel] || {};
+    evs = (dd.recent || dd.timeline || []).map(e => ({...e, project: sel}));
+    note = `${evs.length} ล่าสุดจาก digest`;
+  } else if (!sel) {
+    evs = Object.entries(D).flatMap(([p, dd]) => p === c ? allLoaded().filter(e => e.timeline !== false).map(e => ({...e, project: p}))
+      : (dd.recent || dd.timeline || []).map(e => ({...e, project: p})));
+    note = "ทุกโปรเจกต์ · โปรเจกต์อื่นเป็น digest";
+  } else {
+    evs = isV2(d) ? allLoaded().filter(e => e.timeline !== false).map(e => ({...e, project: c})) : (d.timeline || []).map(e => ({...e, project: c}));
+  }
+  evs = evs.filter(match).sort((a,b) => (b.date||"").localeCompare(a.date||"") || String(b.id).localeCompare(String(a.id)));
+  $("note").textContent = note;
+  let last = "";
+  const EV = "relative mb-3.5 before:content-[''] before:absolute before:-left-[30px] before:top-1.5 before:w-3 before:h-3 before:rounded-full before:border-2 before:border-card before:bg-[var(--c)]";
+  $("timeline").innerHTML = evs.map(e => { const m = (e.date||"").slice(0,7), head = m !== last ? (last = m, `<div class="mt-3.5 mb-2 -ml-2.5 font-bold text-mute">${esc(m)}</div>`) : "";
+    const n = (e.modules||[]).length + (e.tasks||[]).length + (e.stakeholders||[]).length;
+    const icons = [e.decision ? ic("decision") : "", e.plan_change ? ic("change") : "", e.meeting ? ic("meeting") : "", e.ref ? ic("file") : "", n ? `+${n}` : ""].filter(Boolean).join(" ");
+    return head + `<details class="${EV}" style="--c:var(--${esc(e.type)},var(--change))"><summary class="cursor-pointer"><span class="inline-block text-[11px] font-bold uppercase tracking-wider text-[color:var(--c)]">${esc(e.type)}</span> <span class="${MUTE}">${esc(e.date)}</span> <b>${esc(e.title)}</b> <span class="${MUTE}">${!sel ? esc(e.project) + " " : ""}${icons}</span></summary>
+    ${e.summary ? `<div class="mt-1">${esc(e.summary)}</div>` : ""}
+    <div class="mt-1.5">${(e.modules||[]).map(x => tag("box", x)).join("")}${(e.tasks||[]).map(t => tag("task", t)).join("")}
+    ${e.decision ? tag("decision", e.decision) : ""}${e.meeting ? tag("meeting", e.meeting) : ""}${e.plan_change ? tag("change", e.plan_change) : ""}
+    ${e.ref ? tag("file", e.ref, "รายละเอียดอยู่ในไฟล์นี้") : ""}${(e.stakeholders||[]).map(s => tag("user", s)).join("")}</div></details>`; }).join("") || `<p class="${EMPTY}">ไม่มีเหตุการณ์</p>`;
+  renderModules(D, c, sel, inRange);
+}
+
+function renderModules(D, c, sel, inRange) {
+  const g = id => $(id).value, mods = {};
+  const target = sel || c;
+  if (isV2(D[target])) {
+    if (target === c) allLoaded().forEach(e => (e.module_events || []).forEach(me => (mods[me.module] = mods[me.module] || []).push({...me, date: me.date || e.date})));
+    else (D[target].modules || []).forEach(m => mods[m.module] = m.recent || []);
+  } else (D[target] && D[target].modules || []).forEach(m => mods[m.module] = m.evolution || []);
+  const names = Object.keys(mods).filter(m => !g("f-module") || m === g("f-module")).sort();
+  $("modules").innerHTML = names.map(m => { const steps = mods[m].filter(x => inRange(x.date||"")).sort((a,b) => (a.date||"").localeCompare(b.date||""));
+    const dg = (D[target].modules || []).find(x => x.module === m), total = dg && dg.event_count;
+    return `<details class="border border-line rounded-lg p-2.5"><summary class="cursor-pointer"><b>${ic("box", "w-3.5 h-3.5")} ${esc(m)}</b> <span class="${MUTE}">${steps.length}${total ? ` / ${total}` : ""}</span></summary>${steps.map(x =>
+      `<div class="my-2 pl-2 py-0.5 border-l-[3px] border-accent"><span class="${MUTE}">${esc(x.date)}</span> <b>${esc(x.stage||"")}</b> ${esc(x.change||"")}
+      ${x.task ? tag("task", x.task) : ""}${x.decision ? tag("decision", x.decision) : ""}</div>`).join("") || `<p class="${EMPTY}">ยังไม่โหลดช่วงนี้</p>`}</details>`; }).join("") || `<p class="${EMPTY}">ไม่มี module</p>`;
+}
+
+async function fallback() {
+  try { const j = await fetch("../10-Data/journey.json").then(r => { if (!r.ok) throw 0; return r.json(); }); PROJ = {project:j.project, journey:j}; init(); }
+  catch (e) { $("loader").hidden = false; $("files").onchange = async ev => { const j = JSON.parse(await ev.target.files[0].text()); $("loader").hidden = true; PROJ = {project:j.project, journey:j}; init(); }; }
+}
+init();
+</script>
+</body>
+</html>

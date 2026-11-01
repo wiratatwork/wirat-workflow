@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress</title>
+<!-- wf-view-version: 19 -->
+<!-- Created once by the workflow. Never regenerate: update 10-Data/*.json, then run `wf.py bundle`. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {darkMode: "media", theme: {extend: {
+    fontFamily: {sans: ['"Noto Sans Thai"', '"Noto Sans"', 'system-ui', 'sans-serif']},
+    colors: {
+      bg:"var(--bg)", card:"var(--card)", ink:"var(--ink)", mute:"var(--mute)", line:"var(--line)", accent:"var(--accent)",
+      ok:"var(--ok)", "ok-bg":"var(--ok-bg)", risk:"var(--risk)", "risk-bg":"var(--risk-bg)", late:"var(--late)", "late-bg":"var(--late-bg)",
+      blk:"var(--blk)", "blk-bg":"var(--blk-bg)", wu:"var(--wu)", "wu-bg":"var(--wu-bg)", wm:"var(--wm)", "wm-bg":"var(--wm-bg)",
+      unk:"var(--unk)", "unk-bg":"var(--unk-bg)", done:"var(--done)", "done-bg":"var(--done-bg)"
+    }}}};
+</script>
+<style type="text/tailwindcss">
+:root{--bg:#f4f4f5;--card:#fff;--ink:#1a1a1a;--mute:#5f6368;--line:#e2e2e5;--accent:#eb0a1e;
+--ok:#12805c;--ok-bg:#e6f6ef;--risk:#b54708;--risk-bg:#fef4e6;--late:#9f0712;--late-bg:#fde8ea;
+--blk:#6b2fbf;--blk-bg:#f3ecfd;--wu:#1f62c7;--wu-bg:#e8f0fd;--wm:#0e7c86;--wm-bg:#e3f5f6;--unk:#555e6e;--unk-bg:#eef0f3;--done:#4b5563;--done-bg:#eceff3}
+@media (prefers-color-scheme:dark){:root{--bg:#0f0f10;--card:#1a1b1e;--ink:#f2f2f3;--mute:#a1a1aa;--line:#2e2f33;--accent:#ff4d5e;
+--ok:#4fd1a1;--ok-bg:#12352a;--risk:#f5b452;--risk-bg:#3a2a12;--late:#ff7a8f;--late-bg:#3d1820;--blk:#c4a2ff;--blk-bg:#2c2040;
+--wu:#86b4ff;--wu-bg:#172a48;--wm:#5fd3dc;--wm-bg:#11343a;--unk:#b3bac6;--unk-bg:#272d38;--done:#a5adbb;--done-bg:#252a33}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+<script src="../10-Data/data.js"></script>
+<script src="../../../../Portfolio/portfolio-data.js"></script>
+<script>if (!window.WF_PORTFOLIO_DATA) document.write('<script src="../10-Data/portfolio-data.js"><\/script>');</script><!-- copy used only when this workspace is mapped outside <workspace>/Projects -->
+</head>
+<body class="bg-bg text-ink text-sm leading-normal font-sans">
+<header class="p-4 bg-[#1a1a1a] dark:bg-black text-white border-b-[3px] border-accent">
+  <div class="flex flex-wrap items-baseline gap-3"><h1 id="title" class="text-xl font-bold">Progress</h1><span id="meta" class="text-xs text-zinc-300"></span></div>
+  <div id="modes" class="flex flex-wrap gap-1.5 mt-2.5">
+    <button data-mode="all" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">ทั้งหมด</button>
+    <button data-mode="project" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">โปรเจกต์</button>
+    <button data-mode="wirat" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">ของฉัน</button>
+    <button data-mode="stakeholder" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">รายคน</button>
+  </div>
+  <div id="filters" class="flex flex-wrap items-end gap-2 mt-2.5">
+    <label class="flex flex-col text-[11px] text-zinc-300">Project<select id="f-project" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Owner<select id="f-owner" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Health<select id="f-health" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+    <label class="flex flex-col text-[11px] text-zinc-300">Due<select id="f-due" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0">
+      <option value="">ทั้งหมด</option><option value="overdue">เลยกำหนด</option><option value="7">7 วัน</option>
+      <option value="14">14 วัน</option><option value="30">30 วัน</option></select></label>
+    <details class="w-full">
+      <summary class="cursor-pointer py-1 text-xs text-zinc-300">ตัวกรองเพิ่ม</summary>
+      <div class="flex flex-wrap items-end gap-2 mt-2.5">
+        <label class="flex flex-col text-[11px] text-zinc-300">Module<select id="f-module" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+        <label class="flex flex-col text-[11px] text-zinc-300">Stakeholder<select id="f-stake" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+        <label class="flex flex-col text-[11px] text-zinc-300">Status<select id="f-status" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></select></label>
+        <label class="flex flex-col text-[11px] text-zinc-300">Due ก่อน<input type="date" id="f-due-before" class="px-2 py-1.5 border border-line rounded-md bg-card text-ink min-w-[120px] min-h-[44px] md:min-h-0"></label>
+        <button id="reset" type="button" class="px-2.5 py-1 min-h-[44px] md:min-h-0 rounded-full border border-line bg-bg text-ink cursor-pointer">ล้าง</button>
+      </div>
+    </details>
+  </div>
+</header>
+<main id="app" class="grid gap-4 p-4 max-w-[1400px] mx-auto">
+  <div id="loader" hidden class="border-2 border-dashed border-line rounded-[10px] p-4 text-center">
+    <p>ไม่พบข้อมูล — รัน <code>wf.py bundle</code></p>
+    <input type="file" id="files" accept=".json" multiple>
+  </div>
+  <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0">
+    <h2 class="text-[15px] font-semibold mb-2.5">Projects <span id="machine" class="text-xs font-normal text-mute"></span> <span id="unmapped" class="text-xs font-normal text-late"></span></h2>
+    <div id="projstrip" class="flex flex-wrap gap-2"></div>
+  </section>
+  <section id="kpis" class="grid gap-2.5 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]"></section>
+  <div id="fbar" class="flex flex-wrap items-center gap-2 empty:hidden"></div>
+  <section id="gantt-card" class="bg-card border border-line rounded-[10px] p-3.5 min-w-0">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+      <h2 class="text-[15px] font-semibold" title="แถบคำนวณย้อนจาก due ตาม estimate (วันทำงาน) — ประมาณการ ไม่ใช่วันเริ่มจริง">Gantt <span id="g-title" class="text-xs font-normal text-mute"></span></h2>
+      <div id="gtools" class="flex flex-wrap gap-1.5">
+        <button data-z="day" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">วัน</button>
+        <button data-z="week" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">สัปดาห์</button>
+        <button data-z="month" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">เดือน</button>
+        <button id="gtoday" class="px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer bg-bg text-ink border-line">วันนี้</button>
+      </div>
+    </div>
+    <div id="gantt" class="relative overflow-x-auto"></div>
+    <dialog id="g-modal" class="w-[min(560px,92vw)] p-0 rounded-xl border border-line bg-card text-ink backdrop:bg-black/50"><div id="g-modal-body"></div></dialog>
+    <div id="g-nodue" class="mt-2.5"></div>
+  </section>
+  <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(380px,100%),1fr))]">
+    <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><h2 class="text-[15px] font-semibold mb-2.5">Capacity</h2><div id="capacity"></div></section>
+    <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><h2 class="text-[15px] font-semibold mb-2.5">Dependencies</h2><div id="deps"></div></section>
+  </div>
+  <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><h2 id="tasks-title" class="text-[15px] font-semibold mb-2.5">Tasks</h2><div class="overflow-x-auto"><table id="tasks" class="w-full border-collapse"></table></div></section>
+  <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><h2 class="text-[15px] font-semibold mb-2.5">Stakeholders</h2><div id="stakes" class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(380px,100%),1fr))]"></div></section>
+  <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(380px,100%),1fr))]">
+    <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><h2 class="text-[15px] font-semibold mb-2.5">Open questions</h2><div id="oqs" class="overflow-x-auto"></div></section>
+    <section class="bg-card border border-line rounded-[10px] p-3.5 min-w-0"><h2 class="text-[15px] font-semibold mb-2.5">UAT &amp; skills</h2><div id="misc"></div></section>
+  </div>
+</main>
+<script>
+"use strict";
+const OWNER = "wirat";
+const HEALTH = {"on-track":"On track","at-risk":"At risk","delayed":"Delayed","blocked":"Blocked",
+  "waiting-user":"Waiting on user","waiting-manager":"Waiting on manager","unknown":"Unknown / needs confirmation",
+  "proposed":"Proposed","done":"Done"};
+const SHORT = {"on-track":"On track","at-risk":"At risk","delayed":"Delayed","blocked":"Blocked",
+  "waiting-user":"Wait user","waiting-manager":"Wait mgr","unknown":"Unknown","proposed":"Proposed","done":"Done"};
+const ORDER = ["delayed","blocked","at-risk","waiting-user","waiting-manager","unknown","on-track","proposed","done"];
+const GSTATUS = ["on-track","at-risk","delayed","blocked","waiting-user","waiting-manager","unknown","done"];
+const CLOSED = ["done","cancelled","accepted"];
+const DAY = 864e5, ms = d => d.getTime();
+const ZOOM = {day: {ppd: 28, step: 1}, week: {ppd: 14, step: 7}, month: {ppd: 7, step: 0}};
+
+// Tailwind class sets (full strings so the CDN can see them)
+const TXT = {"on-track":"text-ok bg-ok-bg","at-risk":"text-risk bg-risk-bg","delayed":"text-late bg-late-bg","blocked":"text-blk bg-blk-bg",
+  "waiting-user":"text-wu bg-wu-bg","waiting-manager":"text-wm bg-wm-bg","unknown":"text-unk bg-unk-bg","proposed":"text-unk bg-unk-bg","done":"text-done bg-done-bg"};
+const BG = {"on-track":"bg-ok","at-risk":"bg-risk","delayed":"bg-late","blocked":"bg-blk","waiting-user":"bg-wu","waiting-manager":"bg-wm",
+  "unknown":"bg-unk","proposed":"bg-unk","done":"bg-done"};
+const ROWBAR = {"delayed":"shadow-[inset_3px_0_0_var(--late)]","blocked":"shadow-[inset_3px_0_0_var(--blk)]","at-risk":"shadow-[inset_3px_0_0_var(--risk)]"};
+const TAB = "px-3 py-1.5 min-h-[44px] md:min-h-0 rounded-full border cursor-pointer";
+const TAB_ON = "bg-accent text-white dark:text-zinc-950 border-accent", TAB_OFF = "bg-bg text-ink border-line";
+const tabCls = on => `${TAB} ${on ? TAB_ON : TAB_OFF}`;
+const BTN = "px-2.5 py-1 min-h-[44px] md:min-h-0 rounded-full border border-line bg-bg text-ink cursor-pointer";
+const TH = "px-2 py-1.5 text-left align-top text-xs font-semibold text-mute whitespace-nowrap cursor-pointer border-b border-line";
+const TH_STATIC = "px-2 py-1.5 text-left align-top text-xs font-semibold text-mute whitespace-nowrap border-b border-line";
+const TD = "px-2 py-1.5 text-left align-top border-b border-line";
+const MUTE = "text-xs text-mute", EMPTY = "text-mute italic", UL = "list-disc pl-[18px] m-0";
+const PILL = "inline-block px-2 mr-1 rounded-full text-xs bg-bg border border-line";
+
+// Lucide-style inline icons (no emoji)
+const P = {
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  ban: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>', x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>', minus: '<path d="M5 12h14"/>',
+  down: '<path d="m6 9 6 6 6-6"/>', right: '<path d="m9 18 6-6-6-6"/>'
+};
+const ic = (n, c = "w-3.5 h-3.5") => `<svg class="${c} inline-block align-[-2px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+
+let PROJ = window.WF_PROJECT_DATA || null;
+let PORT = window.WF_PORTFOLIO_DATA || null;
+const state = {mode: "project", sort: "due"};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const badge = h => `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${TXT[h] || TXT.unknown}" title="${esc(HEALTH[h] || h)}">${esc(SHORT[h] || h)}</span>`;
+const dot = h => `<span class="inline-block w-2 h-2 rounded-full align-middle ${BG[h] || BG.unknown}" title="${esc(HEALTH[h] || h || "unknown")}"></span>`;
+const today = () => new Date(((PORT||{}).as_of || (PROJ&&PROJ.progress&&PROJ.progress.as_of) || new Date().toISOString().slice(0,10)) + "T00:00:00");
+const days = s => s ? Math.round((new Date(s + "T00:00:00") - today()) / DAY) : null;
+const fmtShort = s => s ? s.slice(5).split("-").reverse().join("/") : "—";   // 2026-11-04 -> 04/11
+const isoLocal = d => [d.getFullYear(), String(d.getMonth()+1).padStart(2,"0"), String(d.getDate()).padStart(2,"0")].join("-");
+const fmtDM = d => `${d.getDate()}/${d.getMonth()+1}`;
+const monthLabel = d => `${d.getMonth()+1}/${String(d.getFullYear()).slice(2)}`;
+const taskIds = list => [...new Set((list || []).filter(x => /^TASK-/.test(x)))];
+
+function data() {
+  if (PORT) return PORT;
+  // single-project fallback (portfolio bundle missing)
+  const p = PROJ || {};
+  const prog = p.progress || {};
+  return {projects:[{slug:p.project, name:(p.backlog||{}).project_name||p.project}], tasks: prog.tasks || (p.backlog||{}).tasks || [],
+    stakeholders: prog.stakeholders || [], open_questions: (p.backlog||{}).open_questions || [],
+    capacity: {conflicts: prog.capacity_conflicts || [], projects: []}, skill_usage: {counts:{}}, uat: {[p.project]: prog.uat}, as_of: prog.as_of};
+}
+
+function init() {
+  if (!PORT && !PROJ) { tryFetch(); return; }
+  const D = data();
+  state.project = (PROJ && PROJ.project) || (D.projects[0]||{}).slug || "";
+  $("title").textContent = "Progress — " + ((D.projects.find(p=>p.slug===state.project)||{}).name || state.project || "Portfolio");
+  $("meta").textContent = `ณ ${D.as_of || "?"}`;
+  $("meta").title = `bundle ${D.bundled_at || (PROJ&&PROJ.bundled_at) || "?"} · ${PORT ? "portfolio data (ทุกโปรเจกต์)" : "เฉพาะโปรเจกต์นี้"}`;
+  const uniq = arr => [...new Set(arr.filter(Boolean))].sort();
+  const fill = (id, vals, label) => { $(id).innerHTML = `<option value="">${label}</option>` + vals.map(v => `<option>${esc(v)}</option>`).join(""); };
+  fill("f-project", D.projects.map(p=>p.slug), "ทุกโปรเจกต์");
+  fill("f-module", uniq(D.tasks.map(t=>t.module)), "ทั้งหมด");
+  fill("f-owner", uniq(D.tasks.map(t=>t.owner)), "ทุกคน");
+  fill("f-stake", uniq(D.stakeholders.map(s=>s.id).concat(D.tasks.flatMap(t=>t.stakeholders||[]))), "ทุกคน");
+  fill("f-status", uniq(D.tasks.map(t=>t.status)), "ทั้งหมด");
+  $("f-health").innerHTML = `<option value="">ทั้งหมด</option>` + ORDER.map(h=>`<option value="${h}">${SHORT[h]}</option>`).join("");
+  $("f-project").value = state.project;
+  state.zoom = "week"; state.gCollapsed = {}; state.sel = null;
+  $("gantt-card").onclick = ganttClick;
+  $("gantt-card").onkeydown = e => { if (e.target.matches && e.target.matches("[data-id]") && isActivate(e)) ganttClick(e); };
+  $("tasks").onclick = e => { const tr = e.target.closest("tr[data-id]"); if (tr) pickTask(tr.dataset.id); };
+  $("tasks").onkeydown = e => { if (e.target.matches && e.target.matches("tr[data-id]") && isActivate(e)) pickTask(e.target.dataset.id); };
+  window.addEventListener("resize", () => { clearTimeout(state.rz); state.rz = setTimeout(renderGantt, 150); });
+  // Tailwind (CDN) and the web font arrive after the first render: draw the arrows again once the layout settles
+  if (window.ResizeObserver) new ResizeObserver(() => drawArrows()).observe($("gantt"));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderGantt());
+  document.querySelectorAll("#modes button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
+  document.querySelectorAll("#filters select, #filters input").forEach(el => el.onchange = render);
+  $("reset").onclick = () => { document.querySelectorAll("#filters select, #filters input").forEach(el => el.value = ""); setMode(state.mode); };
+  try { const m = localStorage.getItem("wf-progress-mode"); if (m) state.mode = m; } catch (e) {}
+  setMode(state.mode);
+}
+
+function setMode(m) {
+  state.mode = m;
+  try { localStorage.setItem("wf-progress-mode", m); } catch (e) {}
+  document.querySelectorAll("#modes button").forEach(b => b.className = tabCls(b.dataset.mode === m));
+  // each mode owns the project / owner / stakeholder filters; other filters are kept
+  const set = (id, v) => { $(id).value = v; };
+  if (m === "all") { set("f-project", ""); set("f-owner", ""); set("f-stake", ""); }
+  if (m === "project") { set("f-project", $("f-project").value || state.project); set("f-owner", ""); set("f-stake", ""); }
+  if (m === "wirat") { set("f-project", ""); set("f-owner", OWNER); set("f-stake", ""); }
+  if (m === "stakeholder") {
+    set("f-project", ""); set("f-owner", "");
+    if (!$("f-stake").value) $("f-stake").selectedIndex = Math.min(1, $("f-stake").options.length - 1);
+  }
+  render();
+}
+
+function filtered() {
+  const D = data(), f = id => $(id).value;
+  return D.tasks.filter(t => {
+    if (f("f-project") && t.project !== f("f-project")) return false;
+    if (f("f-module") && t.module !== f("f-module")) return false;
+    if (f("f-owner") && t.owner !== f("f-owner")) return false;
+    if (f("f-stake")) { const s = f("f-stake"); if (t.owner !== s && !(t.stakeholders||[]).includes(s) && !(t.blocked_by||[]).includes(s)) return false; }
+    if (f("f-status") && t.status !== f("f-status")) return false;
+    if (f("f-health") && t.health !== f("f-health")) return false;
+    const dd = days(t.due);
+    if (f("f-due") === "overdue" && !(dd !== null && dd < 0 && t.health !== "done")) return false;
+    if (f("f-due") && f("f-due") !== "overdue" && !(dd !== null && dd >= 0 && dd <= +f("f-due"))) return false;
+    if (f("f-due-before") && !(t.due && t.due <= f("f-due-before"))) return false;
+    return true;
+  });
+}
+
+function isActivate(e) {
+  if (e.type === "click") return true;
+  if (e.key !== "Enter" && e.key !== " ") return false;
+  e.preventDefault();
+  return true;
+}
+
+function render() {
+  const D = data(), tasks = filtered();
+  const counts = {}; tasks.forEach(t => counts[t.health] = (counts[t.health]||0) + 1);
+  // keep keyboard focus on the same card after the cards are re-drawn
+  const a = document.activeElement, fk = a && a.dataset && (a.dataset.h ? `[data-h="${a.dataset.h}"]` : a.dataset.p ? `[data-p="${a.dataset.p}"]` : "");
+  const hf = $("f-health").value;
+  $("kpis").innerHTML = ORDER.filter(h => h !== "proposed" || counts[h]).map(h =>
+    `<button type="button" data-h="${h}" aria-pressed="${hf === h}" title="กรองตามสถานะนี้ (กดซ้ำเพื่อยกเลิก)" class="rounded-[10px] px-3 py-2.5 min-h-[44px] border cursor-pointer text-left transition-opacity ${TXT[h]} ${hf === h ? "border-ink ring-2 ring-ink" : "border-line"} ${hf && hf !== h ? "opacity-50" : ""}"><b class="block text-2xl">${counts[h]||0}</b><span>${esc(SHORT[h])}</span></button>`).join("");
+  document.querySelectorAll("#kpis button").forEach(k => k.onclick = () => { $("f-health").value = $("f-health").value === k.dataset.h ? "" : k.dataset.h; render(); });
+  // a visible, one-tap way to clear the filter the cards just applied
+  $("fbar").innerHTML = hf ? `<button type="button" id="fclear" class="${BTN}" title="ล้างตัวกรองสถานะ">${esc(SHORT[hf] || hf)} · ${tasks.length} งาน ${ic("x")}</button>` : "";
+  if ($("fclear")) $("fclear").onclick = () => { $("f-health").value = ""; render(); };
+  $("tasks-title").textContent = `Tasks (${tasks.length})`;
+  renderGantt(); renderProjects(D); renderTasks(tasks); renderCapacity(D); renderDeps(D, tasks); renderStakes(D, tasks); renderOqs(D); renderMisc(D);
+  if (fk) { try { const el = document.querySelector(fk); if (el) el.focus({preventScroll: true}); } catch (e) {} }
+}
+
+function renderProjects(D) {
+  $("machine").textContent = D.machine ? "· " + D.machine : "";
+  const open = {}, risk = {};
+  D.tasks.forEach(t => { if (t.health !== "done" && t.health !== "proposed") { open[t.project] = (open[t.project]||0) + 1;
+    if (["delayed","blocked","at-risk"].includes(t.health)) risk[t.project] = (risk[t.project]||0) + 1; } });
+  const cur = $("f-project").value;
+  const unmapped = (D.projects||[]).filter(p => p.repo_mapped === false);
+  $("unmapped").innerHTML = unmapped.length ? `${ic("alert")} ${unmapped.length} ยังไม่ map` : "";
+  $("unmapped").title = unmapped.map(p => `wf.py projects map ${p.slug} --repo <path>`).join("\n");
+  $("projstrip").innerHTML = (D.projects||[]).map(p => {
+    const r = risk[p.slug] || 0, o = open[p.slug] || 0;
+    const mapDot = p.repo_mapped === undefined ? "" : `<i class="inline-block w-2 h-2 rounded-full align-middle ${p.repo_mapped ? "bg-ok" : "bg-late"}" title="${p.repo_mapped ? "map แล้ว" : "ยังไม่ map"}"></i>`;
+    return `<div data-p="${esc(p.slug)}" role="button" tabindex="0" title="${esc(p.slug)}" class="border rounded-lg px-2.5 py-1.5 min-w-[150px] bg-bg cursor-pointer ${cur===p.slug ? "border-accent ring-2 ring-inset ring-accent" : "border-line"}">
+      <b class="block">${esc(p.name||p.slug)}</b><span class="${MUTE}">${o} เปิด${r ? ` · <span class="text-late">${ic("alert", "w-3 h-3")} ${r}</span>` : ""} ${mapDot}</span></div>`; }).join("")
+    || `<span class="${MUTE}">—</span>`;
+  document.querySelectorAll("#projstrip [data-p]").forEach(c => c.onclick = c.onkeydown = e => { if (!isActivate(e)) return; $("f-project").value = c.dataset.p; setMode("project"); });
+}
+
+function renderTasks(tasks) {
+  const cols = [["id","ID"],["title","Task"]].concat(state.mode === "project" ? [] : [["project","Project"]])
+    .concat([["owner","Owner"],["health","Health"],["due","Due"],["progress","%"]]);
+  const key = state.sort, dir = state.dir || 1;
+  const sorted = [...tasks].sort((a,b) => key === "health" ? (ORDER.indexOf(a.health)-ORDER.indexOf(b.health))*dir
+    : String(a[key] ?? "~").localeCompare(String(b[key] ?? "~"), undefined, {numeric:true}) * dir);
+  $("tasks").innerHTML = `<thead><tr>${cols.map(([k,l]) => `<th data-k="${k}" tabindex="0" class="${TH}" aria-sort="${k===key?(dir>0?"ascending":"descending"):"none"}">${l}${k===key?(dir>0?" ▲":" ▼"):""}</th>`).join("")}</tr></thead><tbody>` +
+    (sorted.map(t => { const dd = days(t.due); return `<tr data-id="${esc(t.id)}" tabindex="0" class="cursor-pointer hover:bg-bg ${t.id === state.sel ? "bg-bg" : ""}">
+      <td class="${TD} ${ROWBAR[t.health] || ""}">${esc(t.id)}</td><td class="${TD}">${esc(t.title)}</td>${state.mode === "project" ? "" : `<td class="${TD}">${esc(t.project)}</td>`}<td class="${TD}">${esc(t.owner)}</td>
+      <td class="${TD}">${badge(t.health || "unknown")}</td>
+      <td class="${TD}">${esc(fmtShort(t.due))}${dd!==null && t.health!=="done" ? ` <span class="${dd<0?"text-late":"text-mute"} text-xs">${dd<0?`−${-dd}`:`+${dd}`}</span>` : ""}</td>
+      <td class="${TD}">${esc(t.progress ?? 0)}</td></tr>`; }).join("")
+    || `<tr><td colspan="${cols.length}" class="${TD} ${EMPTY}">ไม่มีงาน</td></tr>`) + "</tbody>";
+  document.querySelectorAll("#tasks th").forEach(th => th.onclick = th.onkeydown = e => { if (!isActivate(e)) return; state.dir = state.sort === th.dataset.k ? -(state.dir||1) : 1; state.sort = th.dataset.k; render(); });
+}
+
+function pickTask(id) {
+  state.sel = id;
+  render();
+  openTask(id);
+}
+
+// start = due minus (n-1) working days, so the bar ends on the due date
+function backWorkdays(end, n) {
+  const x = new Date(end); let k = 1;
+  while (k < n) { x.setDate(x.getDate() - 1); if (x.getDay() !== 0 && x.getDay() !== 6) k++; }
+  return x;
+}
+
+function taskDetail(id) {
+  const t = data().tasks.find(x => x.id === id);
+  if (!t) return "";
+  const row = (k, v) => `<tr><th class="${TH_STATIC} w-36 whitespace-normal">${k}</th><td class="${TD}">${v}</td></tr>`;
+  const list = a => a && a.length ? esc(a.join(", ")) : "—";
+  return `<div class="p-4"><div class="flex flex-wrap items-center gap-2 mb-2"><b>${esc(t.id)}</b> ${esc(t.title)} ${badge(t.health || "unknown")}<button type="button" id="g-close" class="${BTN} ml-auto">ปิด</button></div>
+    <table class="w-full border-collapse">${row("Project", esc(t.project))}${row("Module", esc(t.module))}${row("Owner", esc(t.owner))}${row("Stakeholders", list(t.stakeholders))}
+    ${row("Priority / Status", `${esc(t.priority ?? "—")} / ${esc(t.status ?? "—")}`)}${row("Due / Estimate", `${esc(t.due || "—")} / ${esc(t.estimate_days ?? "?")} วัน`)}
+    ${row("Progress", `${esc(t.progress ?? 0)}%`)}${row("Depends on", list(t.dependencies))}
+    ${row("Blocked by / Waiting", list([...(t.blocked_by || []), t.waiting_on ? "waiting: " + t.waiting_on : ""].filter(Boolean)))}
+    ${row("Definition of Done", esc(t.definition_of_done ?? "—"))}</table></div>`;
+}
+
+function openTask(id) {
+  $("g-modal-body").innerHTML = taskDetail(id);
+  $("g-modal").showModal();
+}
+
+function scrollGantt() {
+  const box = $("gantt");
+  if (state.gNow != null) box.scrollLeft = Math.max(0, state.gNow - box.clientWidth / 2);
+}
+
+// dependency arrows: predecessor bar's right edge -> successor bar's left edge
+function drawArrows() {
+  const box = $("gantt"), svg = box.querySelector("svg[data-arrows]");
+  if (!svg) return;
+  const base = box.getBoundingClientRect();
+  const pos = el => { const r = el.getBoundingClientRect(); return {x: r.left - base.left + box.scrollLeft, y: r.top - base.top + box.scrollTop, w: r.width, h: r.height}; };
+  const bars = {}, bs = [...box.querySelectorAll("[data-bar]")];
+  bs.forEach(b => bars[b.dataset.id] = pos(b));
+  let d = "";
+  bs.forEach(b => (b.dataset.deps || "").split(",").filter(Boolean).forEach(p => {
+    const from = bars[p], to = bars[b.dataset.id];
+    if (!from || !to) return;
+    const x1 = from.x + from.w, y1 = from.y + from.h / 2, x2 = to.x, y2 = to.y + to.h / 2, mx = Math.max(x1 + 8, x2 - 8);
+    d += `M${x1} ${y1}H${mx}V${y2}H${x2}`;
+  }));
+  svg.setAttribute("width", box.scrollWidth);
+  svg.setAttribute("height", box.scrollHeight);
+  svg.innerHTML = `<defs><marker id="g-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--mute)"/></marker></defs>`
+    + `<path d="${d}" fill="none" stroke="var(--mute)" stroke-width="1.2" marker-end="url(#g-arr)"/>`;
+}
+
+// one click handler for the whole Gantt card: zoom, today, collapse, select
+function ganttClick(e) {
+  const t = e.target;
+  if (t.closest("[data-z]")) { state.zoom = t.closest("[data-z]").dataset.z; return render(); }
+  if (t.closest("#gtoday")) return scrollGantt();
+  if (t.closest("#g-close") || t === $("g-modal")) return $("g-modal").close();   // close button or backdrop click
+  if (t.closest("[data-g]")) { const g = t.closest("[data-g]").dataset.g; state.gCollapsed[g] = !state.gCollapsed[g]; return render(); }
+  const el = t.closest("[data-id]");
+  if (el) pickTask(el.dataset.id);
+}
+
+function renderGantt() {
+  // follows the header's mode tabs and filters: Single project = the selected project
+  const scope = state.mode === "project" ? "project" : "all", gp = $("f-project").value || state.project || "";
+  const zoomKey = state.zoom || "week", zoom = ZOOM[zoomKey], collapsed = state.gCollapsed;
+  document.querySelectorAll("#gtools [data-z]").forEach(b => b.className = tabCls(b.dataset.z === zoomKey));
+  const open = filtered().filter(t => !CLOSED.includes(t.health) && !CLOSED.includes(t.status));
+  const nodue = open.filter(t => !t.due);
+  $("g-nodue").innerHTML = nodue.length ? `<details><summary class="cursor-pointer text-mute">ไม่มี due (${nodue.length})</summary><ul class="${UL} mt-1">${nodue.map(t => `<li class="my-0.5"><b>${esc(t.id)}</b> ${esc(t.title)} <span class="${MUTE}">${esc(t.owner)}</span></li>`).join("")}</ul></details>` : "";
+  const rows = open.filter(t => t.due)
+    .map(t => { const end = new Date(t.due + "T00:00:00"); return {t, end, start: backWorkdays(end, Math.max(1, Math.ceil(+t.estimate_days || 1)))}; });
+  $("g-title").textContent = (scope === "all" ? "ทุกโปรเจกต์" : gp) + ` · ${rows.length} งาน`;
+  if (!rows.length) { $("gantt").innerHTML = `<p class="${EMPTY}">ไม่มีงานที่มี due</p>`; return; }
+  const now = ms(today());
+  const lo = Math.min(now, ...rows.map(r => ms(r.start))), hi = Math.max(now, ...rows.map(r => ms(r.end)));
+  const rs = lo - 3*DAY, re = hi + 5*DAY, pct = t => (t - rs) / (re - rs) * 100;
+  const W = Math.max(Math.ceil((re - rs) / DAY * zoom.ppd), $("gantt").clientWidth - 268);   // never narrower than the card
+  const ticks = [];
+  if (zoom.step) {
+    const f = new Date(rs); f.setDate(f.getDate() + (zoom.step === 7 ? (8 - f.getDay()) % 7 : 0));   // weeks start on Monday
+    for (const d = f; ms(d) < re; d.setDate(d.getDate() + zoom.step)) ticks.push(new Date(d));
+  } else {
+    for (const d = new Date(new Date(rs).getFullYear(), new Date(rs).getMonth(), 1); ms(d) < re; d.setMonth(d.getMonth() + 1)) if (ms(d) >= rs) ticks.push(new Date(d));
+  }
+  const label = zoomKey === "day" ? d => String(d.getDate()) : zoomKey === "week" ? fmtDM : monthLabel;
+  const ROW = "grid grid-cols-[260px_var(--gw)] gap-2 items-center min-h-[30px] border-b border-line";
+  const grid = ticks.map(d => `<i class="absolute inset-y-0 w-px bg-line" style="left:${pct(ms(d))}%"></i>`).join("");
+  const todayLine = `<i class="absolute inset-y-0 w-px bg-late z-[1]" style="left:${pct(now)}%"></i>`;
+  const legend = `<div class="flex flex-wrap gap-3 mb-2 text-xs text-mute" title="แถบเข้ม = progress · กรอบแดง = เลยกำหนด · เส้นแดง = วันนี้ · ลูกศร = dependency">${GSTATUS.map(h => `<span class="inline-flex items-center gap-1">${dot(h)}${esc(SHORT[h])}</span>`).join("")}</div>`;
+  let html = `<svg data-arrows class="absolute top-0 left-0 pointer-events-none overflow-visible"></svg>${legend}`;
+  html += `<div class="${ROW}"><div></div><div class="relative h-[18px] text-[11px] text-mute">${ticks.map(d => `<span class="absolute top-0 -translate-x-1/2 whitespace-nowrap" style="left:${pct(ms(d))}%">${label(d)}</span>`).join("")}</div></div>`;
+  const groups = scope === "all" ? [...new Set(rows.map(r => r.t.project))].sort() : [gp];
+  for (const g of groups) {
+    const inG = rows.filter(r => r.t.project === g);
+    if (scope === "all") html += `<div class="${ROW}"><button type="button" data-g="${esc(g)}" aria-expanded="${!collapsed[g]}" class="col-span-full pt-2.5 pb-1 min-h-[44px] md:min-h-0 text-left text-xs font-bold text-mute cursor-pointer">${ic(collapsed[g] ? "right" : "down")} ${esc(g)} <span class="font-normal">(${inG.length})</span></button></div>`;
+    if (collapsed[g]) continue;
+    inG.sort((a, b) => ms(a.start) - ms(b.start) || String(a.t.id).localeCompare(String(b.t.id), undefined, {numeric: true}))
+      .forEach(({t, start, end}) => {
+        const deps = taskIds([...(t.dependencies || []), ...(t.blocked_by || [])]);
+        const late = days(t.due) < 0, prog = Math.min(100, Math.max(0, +t.progress || 0)), sel = t.id === state.sel;
+        const left = pct(ms(start)), width = Math.max(pct(ms(end) + DAY) - left, 0.8);
+        const ring = sel ? "outline outline-2 outline-ink outline-offset-1" : late ? "outline outline-2 outline-late outline-offset-1" : "";
+        html += `<div class="${ROW} ${sel ? "bg-bg" : ""}"><div tabindex="0" data-id="${esc(t.id)}" title="${esc(t.title)} · ${esc(t.owner)} · est ${esc(t.estimate_days ?? "?")} วัน" class="min-w-0 text-[13px] cursor-pointer"><span class="block truncate">${dot(t.health)} <b>${esc(t.id)}</b> ${esc(t.title)}</span>`
+          + `<span class="block overflow-hidden text-xs text-mute whitespace-nowrap text-ellipsis">${esc(fmtShort(t.due))} · ${prog}%${deps.length ? ` · <span title="${esc(deps.join(", "))}">${ic("ban", "w-3 h-3")}${deps.length}</span>` : ""}${late ? ` · <span class="text-late">−${-days(t.due)}d</span>` : ""}</span></div>`
+          + `<div class="relative h-[22px] isolate">${grid}${todayLine}<span data-bar data-id="${esc(t.id)}" data-deps="${esc(deps.join(","))}" title="${esc(t.id)} ${esc(isoLocal(start))} ถึง ${esc(isoLocal(end))} · ${prog}%" class="absolute top-1 h-3.5 min-w-[6px] rounded overflow-hidden z-[2] ${BG[t.health] || BG.unknown} ${ring}" style="left:${left}%;width:${width}%"><i class="absolute inset-y-0 left-0 bg-black/35" style="width:${prog}%"></i></span></div></div>`;
+      });
+  }
+  const box = $("gantt");
+  box.style.setProperty("--gw", W + "px");
+  box.innerHTML = html;
+  state.gNow = 268 + pct(now) / 100 * W;   // label column (260) + gap (8)
+  drawArrows();
+  if (!state.gScrolled) { scrollGantt(); state.gScrolled = true; }
+}
+
+function renderCapacity(D) {
+  const c = D.capacity || {};
+  if (!c.projects || !c.projects.length) { $("capacity").innerHTML = `<p class="${EMPTY}">ยังไม่มีข้อมูล</p>`; return; }
+  const capH = c.capacity_hours_this_week || 0, committed = c.committed_hours_this_week || 0, over = committed > capH;
+  const conflicts = c.conflicts || [], unknown = c.unknown_estimate_tasks || [];
+  $("capacity").innerHTML = `<div class="${MUTE}">${esc(c.week&&c.week.start)} – ${esc(c.week&&c.week.end)}</div>
+    <div class="my-1 text-lg"><b>${committed}</b> / ${capH} h ${over ? '<span class="text-late">เกินกำลัง</span>' : `<span class="text-ok">ว่าง ${esc(c.available_hours_this_week)} h</span>`}</div>
+    <div class="h-2.5 mb-2 overflow-hidden rounded-[5px] bg-line"><i class="block h-full ${over ? "bg-late" : "bg-accent"}" style="width:${Math.min(100, capH ? committed/capH*100 : 0)}%"></i></div>
+    <table class="w-full border-collapse"><thead><tr><th class="${TH_STATIC}">Project</th><th class="${TH_STATIC}">Tasks</th><th class="${TH_STATIC}">h</th></tr></thead><tbody>
+    ${c.projects.map(p => `<tr><td class="${TD}">${esc(p.name)}</td><td class="${TD}">${p.active_tasks}</td><td class="${TD}">${p.committed_hours_this_week}</td></tr>`).join("")}</tbody></table>
+    ${conflicts.length ? `<details class="mt-2.5"><summary class="cursor-pointer text-late">${ic("alert")} ${conflicts.length} conflict</summary><ul class="${UL} mt-1">${conflicts.map(x => `<li class="my-1"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${x.severity==="high" ? TXT.delayed : TXT["at-risk"]}">${esc(x.type)}</span> ${esc(x.task ? x.task + " (" + x.project + ") " : "")}${esc(x.detail)}</li>`).join("")}</ul></details>` : ""}
+    ${unknown.length ? `<p class="mt-2 ${MUTE}" title="${esc(unknown.join(", "))}">ไม่มี estimate/due: ${unknown.length} งาน</p>` : ""}`;
+}
+
+function renderDeps(D, tasks) {
+  const byId = Object.fromEntries(D.tasks.map(t => [t.id, t])), ids = new Set(tasks.map(t => t.id)), risks = [];
+  D.tasks.filter(t => ids.has(t.id) && t.health !== "done").forEach(t => (t.dependencies||[]).forEach(dep => {
+    const x = byId[dep];
+    if (!x) risks.push(`${t.id} → ${dep}: ไม่พบ`);
+    else if (x.health !== "done" && (["delayed","blocked","waiting-user","waiting-manager","unknown"].includes(x.health) || (x.due && t.due && x.due >= t.due)))
+      risks.push(`${t.id} รอ ${dep} (${HEALTH[x.health]})${x.due && t.due && x.due >= t.due ? " · due ไม่ทัน" : ""}`);
+  }));
+  $("deps").innerHTML = risks.length ? `<ul class="${UL}">${risks.map(r => `<li class="my-1">${esc(r)}</li>`).join("")}</ul>` : `<p class="${EMPTY}">ไม่มีความเสี่ยง</p>`;
+}
+
+function renderStakes(D, tasks) {
+  const people = {};
+  const add = (id, kind, t) => { if (!id) return; (people[id] = people[id] || {owner:[], blocking:[], involved:[]})[kind].push(t); };
+  tasks.forEach(t => { add(t.owner, "owner", t); (t.blocked_by||[]).forEach(b => add(b, "blocking", t)); (t.stakeholders||[]).forEach(s => s !== t.owner && add(s, "involved", t)); });
+  const meta = {};  // one person can be a stakeholder in several projects
+  D.stakeholders.forEach(s => { const m = meta[s.id] = meta[s.id] || {...s, projects: []}; if (!m.projects.includes(s.project)) m.projects.push(s.project); });
+  const impacts = D.stakeholder_impact || {};
+  const impactText = x => [
+    `${x.blocked_tasks.length} งานถูก block (${x.blocked_hours}h)`, `งานต่อเนื่อง ${x.downstream_tasks.length}`, `เสี่ยงรวม ${x.hours_at_risk}h`,
+    x.earliest_affected_due ? `deadline แรก ${x.earliest_affected_due}` : "", x.projects.length ? `โปรเจกต์ ${x.projects.join(", ")}` : "",
+    x.delayed_owned.length ? `ล่าช้า: ${x.delayed_owned.join(", ")}` : ""].filter(Boolean).join(" · ");
+  const pill = (n, label, cls) => n ? `<span class="${PILL} ${cls}">${label} ${n}</span>` : "";
+  const ids = Object.keys(people).sort((a,b) => (a===OWNER?-1:b===OWNER?1:a.localeCompare(b)));
+  $("stakes").innerHTML = ids.map(id => {
+    const p = people[id], m = meta[id] || {}, imp = impacts[id];
+    const seen = new Set(), all = [...p.owner, ...p.blocking, ...p.involved].filter(t => !seen.has(t.id) && seen.add(t.id));
+    const warn = imp && (imp.affected_wirat_tasks.length || imp.delayed_owned.length) ? ` <span class="text-late" title="${esc(impactText(imp))}">${ic("alert")} ${imp.blocked_hours}h</span>` : "";
+    return `<details class="border border-line rounded-lg p-2.5"><summary class="cursor-pointer"><b>${esc(m.name || id)}</b> <span class="${MUTE}">${esc(m.role || (id===OWNER?"Full Stack Developer":""))}</span> ${pill(p.owner.length,"เจ้าของ","")}${pill(p.blocking.length,"รอคนนี้","text-blk")}${pill(p.involved.length,"เกี่ยว","")}${warn}</summary>
+      <ul class="${UL} mt-1">${all.map(t => `<li class="my-1">${dot(t.health)} <b>${esc(t.id)}</b> ${esc(t.title)} <span class="${MUTE}">${esc(fmtShort(t.due))}</span></li>`).join("")}</ul></details>`; }).join("") || `<p class="${EMPTY}">ไม่มีข้อมูล</p>`;
+}
+
+function renderOqs(D) {
+  const pf = $("f-project").value, sf = $("f-stake").value;
+  const qs = (D.open_questions||[]).filter(q => q.status !== "answered" && (!pf || q.project === pf || (!q.project && PROJ && PROJ.project === pf)) && (!sf || q.owner === sf));
+  const warn = t => `<span class="text-late" title="${t}">${ic("alert")}</span>`;
+  $("oqs").innerHTML = qs.length ? `<table class="w-full border-collapse"><thead><tr><th class="${TH_STATIC}">ID</th><th class="${TH_STATIC}">คำถาม</th><th class="${TH_STATIC}">Owner</th><th class="${TH_STATIC}">Meeting</th><th class="${TH_STATIC}">Tasks</th></tr></thead><tbody>${qs.map(q =>
+    `<tr><td class="${TD}">${esc(q.id)}</td><td class="${TD}">${esc(q.question)}</td><td class="${TD}">${q.owner ? esc(q.owner) : warn("ไม่มี owner")}</td><td class="${TD}">${q.target_meeting ? esc(q.target_meeting) : warn("ไม่ระบุ")}</td><td class="${TD}">${(q.linked_tasks||[]).length}</td></tr>`).join("")}</tbody></table>` : `<p class="${EMPTY}">ไม่มีคำถามค้าง</p>`;
+}
+
+function renderMisc(D) {
+  const pf = $("f-project").value, u = D.uat || {};
+  const rows = Object.entries(u).filter(([k,v]) => v && (!pf || k === pf));
+  const counts = (D.skill_usage && D.skill_usage.counts) || {};
+  const top = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 8), max = top.length ? top[0][1] : 1;
+  const hd = (icon, t) => `<th class="${TH_STATIC}" title="${t}" aria-label="${t}">${ic(icon)}</th>`;
+  $("misc").innerHTML = (rows.length ? `<table class="w-full border-collapse"><thead><tr><th class="${TH_STATIC}">Project</th>${hd("check","Pass")}${hd("x","Fail")}${hd("ban","Blocked")}${hd("minus","Not run")}</tr></thead><tbody>${rows.map(([k,v]) =>
+    `<tr><td class="${TD}">${esc(k)}</td><td class="${TD}">${v.Pass}</td><td class="${TD} text-late">${v.Fail}</td><td class="${TD}">${v.Blocked}</td><td class="${TD}">${v["Not Run"]}</td></tr>`).join("")}</tbody></table>` : `<p class="${EMPTY}">ยังไม่มี UAT</p>`) +
+    (top.length ? `<div class="mt-2.5">${top.map(([k,v]) => `<div class="grid grid-cols-[110px_1fr_28px] gap-2 items-center my-1" title="${esc(k)}: ${v}"><span class="truncate">${esc(k)}</span><div class="h-2.5 overflow-hidden rounded-[5px] bg-line"><i class="block h-full bg-accent" style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join("")}</div>` : "");
+}
+
+async function tryFetch() {
+  try {
+    const [bl, pr] = await Promise.all(["../10-Data/backlog.json","../10-Data/progress.json"].map(u => fetch(u).then(r => { if (!r.ok) throw 0; return r.json(); })));
+    useJson(bl, pr);
+  } catch (e) {
+    $("loader").hidden = false;
+    $("files").onchange = async ev => { const out = {}; for (const f of ev.target.files) out[f.name] = JSON.parse(await f.text()); useJson(out["backlog.json"]||{}, out["progress.json"]||{}); };
+  }
+}
+function useJson(bl, pr) {
+  $("loader").hidden = true;
+  PROJ = {project: bl.project || pr.project, backlog: bl, progress: pr};
+  init();
+}
+init();
+</script>
+</body>
+</html>
